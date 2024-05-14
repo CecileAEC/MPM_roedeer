@@ -1,0 +1,30 @@
+This repository is attached to the manuscript entitled "Understanding Roe Deer Population Dynamics in Boreal Environments: Exploring the Impact of Predation, Harvest Pressures and environmental variability on Population Stability and Trends."
+
+This repository contains all R scripts and data files to run and plot the results of the manuscript.
+
+The R file called "MPM_packages_and_functions.R" contain all the necessary packages and the functions used in the simulations and plots.
+The R file called "MPM_load_parameters.R" contain all the parameters value to run the model.
+The R file called "MPM_stochastic_parameters.R" is used to add stochastcity around the parameter value of the model.
+The stochasticity can be turned off in the "MPM_load_parameters.R" file to get a deterministic run with initial parameter values.
+The R file called "MPM_simulations_roedeer.R" contain the model to run the matrix population model as well as the gradient study model.
+The R file called "MPM_plots.R" load the data file .RDS for the different scenarios.
+
+The RDS file are called after their scenario names:
+Scenario without hunting and predation:
+
+Scenario with red fox predation:
+
+Scenario with lynx predation:
+
+Scenario with both red fox and lynx predation:
+
+Scenario with predation and hunting:
+
+
+The same scenario including snow event are called:
+
+
+
+The gradient study data are also called after their scenario name:
+
+
