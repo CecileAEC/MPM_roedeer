@@ -32,27 +32,20 @@ N.roe.init <- VectorPop(round(c(0.237, 0.105, 0.045, 0.147, 0.237, 0.082, 0.147)
 # ----- Roe deer population - DATA -----
 # -
 # Explore different scenarios
-Roe.heaven.normFe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_none-lynx_none-hunt_none.rds")
-Roe.fox.normFe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_none-hunt_none.rds")
-Roe.lyn.normFe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_none-lynx_selective-hunt_none.rds")
-Roe.pred.normFe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_none.rds")
-Roe.hell.normFe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_selective.rds")
-NormFe.list <- list(Roe.heaven.normFe, Roe.fox.normFe, Roe.lyn.normFe, Roe.pred.normFe, Roe.hell.normFe)
+Roe.favourable <- readRDS("roesim-fox_none-lynx_none-hunt_none.rds")
+Roe.fox <- readRDS("roesim-fox_fixed-lynx_none-hunt_none.rds")
+Roe.lynx <- readRDS("roesim-fox_none-lynx_selective-hunt_none.rds")
+Roe.predation <- readRDS("roesim-fox_fixed-lynx_selective-hunt_none.rds")
+Roe.allmortality <- readRDS("roesim-fox_fixed-lynx_selective-hunt_selective.rds")
+Roesim.list <- list(Roe.favourable, Roe.fox, Roe.lynx, Roe.predation, Roe.allmortality)
 
 # Explore Snow event
-Sim.roe.snow.heaven <- readRDS("SNOW_8_30-Repro_FemaleFF-stoch_norm-roe25_500-fox_none-lynx_none-hunt_none.rds")
-Sim.roe.snow.fox <- readRDS("SNOW_8_30-Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_none-hunt_none.rds")
-Sim.roe.snow.lynx <- readRDS("SNOW_8_30-Repro_FemaleFF-stoch_norm-roe25_500-fox_none-lynx_selective-hunt_none.rds")
-Sim.roe.snow.pred <- readRDS("SNOW_8_30-Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_none.rds")
-Sim.roe.snow.hell <- readRDS("SNOW_8_30-Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_selective.rds")
-Roe.snow08.list <- list(Sim.roe.snow.heaven, Sim.roe.snow.fox, Sim.roe.snow.lynx, Sim.roe.snow.pred, Sim.roe.snow.hell)
-
-# Explore snow event with stop hunting the next year
-Simulation.roe <- readRDS("SH_SNOW_8_30_Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_selective.rds")
-# Harvesting male only
-Simulation.roe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_biased-var10.rds")
-# Simulation.roe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_biased.M13.8percent.rds")
-
+Roe.snow.favourable <- readRDS("roesim-fox_none-lynx_none-hunt_none-SNOW.rds")
+Roe.snow.fox <- readRDS("roesim-fox_fixed-lynx_none-hunt_none-SNOW.rds")
+Roe.snow.lynx <- readRDS("roesim-fox_none-lynx_selective-hunt_none-SNOW.rds")
+Roe.snow.predation <- readRDS("roesim-fox_fixed-lynx_selective-hunt_none-SNOW.rds")
+Roe.snow.allmortality <- readRDS("roesim-fox_fixed-lynx_selective-hunt_selective-SNOW.rds")
+Roesim.snow.list <- list(Roe.snow.favourable, Roe.snow.fox, Roe.snow.lynx, Roe.snow.predation, Roe.snow.allmortality)
 
 
 # ---
@@ -60,18 +53,15 @@ Simulation.roe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_se
 # ---
 
 # --- Data preparation ---
-# Roepop <- ArrayToDataframe(Simulation.roe)
-# Simulation.roe <- NormFe.list[[4]]
+Simulation.roe <- Roesim.list[[1]] # Select which scenario you want to plot from the lists above
 Roe.sumpop <- PopSum(Simulation.roe)
 Roe.quant <- PopQuantile(Simulation.roe)
 GR.roe <- GrowthRate(Simulation.roe)
 GR.roe.quant <- GrowthRateQuantile(Simulation.roe)
 Roe.state <- StateProp(Simulation.roe, Ne=sum(N.roe.init)/20, Ni=40*study.area)
-# Roe.state.pivot <- pivot_longer(Roe.state, 2:4, names_to = "state", values_to = "proportion", cols_vary = "slowest")
 
-# --- Plots ---
+# --- Single plots ---
 # # Roe deer population density over time - QUANTILES
-# Roe.quant <- PopQuantile(Roe.sumpop)
 ggplot(Roe.quant) +
   geom_ribbon(aes(x=time, ymin=q95/study.area, ymax=q5/study.area), fill="darkolivegreen", alpha=0.5) +
   geom_ribbon(aes(x=time, ymin=q95/study.area, ymax=q5/study.area), fill="grey", alpha=0.5) +
@@ -83,13 +73,12 @@ ggplot(Roe.quant) +
   theme(legend.key.height= unit(5, 'cm'),
         text = element_text(size = 50),
         axis.text = element_text(size = 50)) +
-  ylim(0, 65) + #80 or 17.5
+  ylim(0, 65) +
   labs(title = "Roe deer population density", x = "Time (Years)", y = "Population density (N/km2)")
 
 
 
 # # Lambda growth rate - QUANTILES
-# GR.roe.quant <- GrowthRateQuantile(GR.roe)
 ggplot(GR.roe.quant) +
   geom_ribbon(aes(x=time, ymin=l.q95, ymax=l.q5), fill="darkolivegreen", alpha=0.5) +
   geom_ribbon(aes(x=time, ymin=l.q95, ymax=l.q5), fill="grey", alpha=0.5) +
@@ -116,14 +105,14 @@ ggplot(Roe.state, aes(x=time, y=proportion*100, fill=state)) +
 
 
 
-# --- Plot all at once!
-Simulation.roe <- roe.predprey[[20]]
+# --- Three plots from one scenario at once:
+Simulation.roe <- Roesim.list[[1]] # Select which scenario you want to plot from the lists of data
 
 Roe1 <- DensityPlot(Simulation.roe, study.area, "Roe deer", x.years = 25, carrying.capacity = (sum(N.roe.init)/(100/20))/study.area)
 Roe2 <- GrowthRatePlot(Simulation.roe, study.area, "Roe deer", x.years = 25)
 Roe3 <- StatePropPlot(Simulation.roe, study.area, "Roe deer", Ne=sum(N.roe.init)/20, Ni=40*study.area, x.years = 25)
 
-
+Roe1 + Roe2 + Roe3
 
 
 
@@ -131,9 +120,9 @@ Roe3 <- StatePropPlot(Simulation.roe, study.area, "Roe deer", Ne=sum(N.roe.init)
 # ----- Roe deer gradient - DATA -----
 # -
 
-Roerate1 <- readRDS("Roedeer-gradientrate-25_500-fox_none-lynx_selective-hunt_none-var10-441.rds")
-Roerate2 <- readRDS("Roedeer-gradientrate-25_500-fox_fixed-lynx_selective-hunt_none-var10-441.rds")
-Roerate3 <- readRDS("Roedeer-gradientrate-25_500-fox_fixed-lynx_selective-hunt_selective-var10-441.rds")
+Roerate1 <- readRDS("roesim-gradientrate-fox_none-lynx_selective-hunt_none.rds")
+Roerate2 <- readRDS("roesim-gradientrate-fox_fixed-lynx_selective-hunt_none.rds")
+Roerate3 <- readRDS("roesim-gradientrate-fox_fixed-lynx_selective-hunt_selective.rds")
 
 # -
 # ----- Roe deer gradient - PLOTS -----
@@ -195,6 +184,6 @@ proportion") +
         text = element_text(size = 25),
         axis.text = element_text(size = 25))
 
-(Roe1 + Roe2 + Roe3)
+Roe1 + Roe2 + Roe3
 
 
