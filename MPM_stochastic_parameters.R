@@ -1,5 +1,4 @@
 # ------------------------------- #
-#          - Chapter I -          #
 #             SETTINGS            #
 #     Packages and parameters     #
 # ------------------------------- #
@@ -114,60 +113,4 @@ if (exists("Simulation.roe")){
     stop("Stochasticity distribution not available")
   }
 }
-
-
-
-
-
-# --------------------------------.
-### --- LYNX POPULATION ----------
-# - Stochastic parameters values -.
-# --------------------------------.
-
-# ----- Reproduction and recruitment parameters -----
-# Average litter size: Nb of offspring per 2 year-old female
-k1.l <- max(1, rnorm(1, k1.l, 0.59)) # k1.l <- runif(1, k1.l-0.96, k1.l+1.78)
-# k1.l <- rnorm(1, k1.l, 2.31) # SEM calculated in Excel sheet
-# Average litter size: Nb of offspring per adult female
-k2.l <- max(1, rnorm(1, k2.l, 0.19)) # k2.l <- runif(1, k2.l-0.27, k2.l+0.31)
-# assign("k2.l", rnorm(1, k2.l, 0.49) # SEM calculated in Excel sheet
-k.l <- c(k1.l, k2.l) # average litter size vector
-# Proportion of female that reproduce
-pr1.l <- runif(1, 0.09, 0.81) # First reproduction
-pr2.l <- runif(1, 0.53, 0.81) # Adult reproduction
-pr.l <- c(pr1.l, pr2.l) # Breeding proportion vector
-
-
-# ----- Survival parameters -----
-# Mortality - Used in survival rate calculation
-# --- Traffic kills, natural and unknown mortality: (+ poaching)
-m.jlynf <- rtruncnorm(1, a=0, b=1, mean = m.jlynf, sd=0.076)
-m.ylynf <- rtruncnorm(1, a=0, b=1, mean = m.ylynf, sd=0.113)
-m.plynf <- rtruncnorm(1, a=0, b=1, mean = m.plynf, sd=0.039)
-m.alynf <- rtruncnorm(1, a=0, b=1, mean = m.alynf, sd=0.039)
-
-m.jlynm <- rtruncnorm(1, a=0, b=1, mean = m.jlynm, sd=0.059)
-m.ylynm <- rtruncnorm(1, a=0, b=1, mean = m.ylynm, sd=0.104)
-m.alynm <- rtruncnorm(1, a=0, b=1, mean = m.alynm, sd=0.057)
-
-# m.jlynf <- runif(1, max(0, m.jlynf-0.126), min(m.jlynf+0.126, 1))
-# m.ylynf <- runif(1, max(0, m.ylynf-0.187), min(m.ylynf+0.187, 1))
-# m.plynf <- runif(1, max(0, m.plynf-0.05), min(m.plynf+0.065, 1))
-# m.alynf <- runif(1, max(0, m.alynf-0.05), min(m.alynf+0.065, 1))
-# 
-# m.jlynm <- runif(1, max(0, m.jlynm-0.097), min(m.jlynm+0.097, 1))
-# m.jlynm <- runif(1, max(0, m.ylynm-0.170), min(m.ylynm+0.170, 1))
-# m.alynm <- runif(1, max(0, m.alynm-0.05), min(m.alynm+0.257, 1))
-
-
-# ----- Predator behaviour ??
-# pred.lynFS <- 2.71 # Number of roe deer killed per month per lynx solitary female
-# pred.lynFK <- 6.23 # Number of roe deer killed per month per lynx female with kittens
-# pred.lynM <- 4.85 # Number of roe deer killed per month per lynx male
-# 
-# 
-# pred.lyn <- c(pred.lynFS, pred.lynFK, pred.lynM)
-# 
-# half.sat <- 0.37 #0.33 # Half saturation density of prey (Nilsen et al., 2009)
-# kill.a <- 10.14 # Asymptotic kill rate (roe deer / 100 days)
 
