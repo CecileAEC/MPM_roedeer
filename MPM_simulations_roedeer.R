@@ -186,21 +186,19 @@ for (i in 1:nrow(scena)){ # For each combination of scenario
       }
     }
     # - Name the scenario simulation
-    scenario_name <- paste0("roe", nYears, "_", nb.sim, "-",
+    scenario_name <- paste0("roesim-",
                             "fox_", Redfox.pred, "-",
                             "lynx_", Lynx.pred, "-",
                             "hunt_", Hunting.roe)
 
     # --- Save simulation for each scenario
     saveRDS(Simulation.roe,
-            file = paste0(if(isTRUE(Stop.hunt.ON.OFF)){"SH_"},
-                          if(isTRUE(Snow.ON.OFF)){paste0("SNOW_", snow.frequency*100, "_", snow.magnitude*100, "-")},
-                          scenario_name, ".rds"))
+            file = paste0(scenario_name,
+                          if(isTRUE(Snow.ON.OFF)){paste0("-SNOW")},
+                          ".rds"))
   }
 }
 # toc()
-
-
 
 
 
@@ -472,12 +470,10 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
     
     # --- Save roe deer state rate:
     saveRDS(Roe.rate,
-            file = paste0("Roedeer-gradientrate-", nYears, "_", nb.sim, "-",
+            file = paste0("roesim-gradientrate-",
                           "fox_", Redfox.pred, "-",
                           "lynx_", Lynx.pred, "-",
-                          "hunt_", Hunting.roe, "-",
-                          "var", init.var*100,
-                          "-", nrow(grad), ".rds"))
+                          "hunt_", Hunting.roe, ".rds"))
   
   }
   toc("simulation")
