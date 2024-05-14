@@ -1,42 +1,15 @@
-                    # ------------------------------- #
-                    #          - Chapter I -          #
-                    #            FUNCTIONS            #
-                    #      for lynx and roe deer      #
-                    #    matrix population models     #
-                    # ------------------------------- #
+                 # -------------------------------------- #
+                 #                FUNCTIONS               #
+                 #    Roe deer matrix population model    #
+                 # -------------------------------------- #
 
-# --------------------------------------------------------------------------- #
-#                     Functions used in the simulation of                     #
-#                    lynx and roe deer predator prey system                   #
-#                              population dynamic                             #
-# --------------------------------------------------------------------------- #
-
-# Help links -----
-
-# Help with a better readable code
-# https://stt4230.rbind.io/programmation/fonctions_r/
-
-# ?source # How to use "source()"
-# https://juba.github.io/tidyverse/05-organiser.html
-
-# About the environment in R:
-# (When I was searching for assign, change values in the chosen environment
-# http://adv-r.had.co.nz/Environments.html
-
-# Apply and avoid for loops:
-# https://nicercode.github.io/guides/repeating-things/
-
-# Help source for writing packages
-# https://community.rstudio.com/t/share-r-scripts-across-projects/15808
-
-# Check the Distribution zoo for distribution
-# https://ben18785.shinyapps.io/distribution-zoo/
-
-# Help with random walk and stochasticity
-# https://jmzobitz.github.io/ModelingWithR/diffusion-24.html
+# ------------------------------------------------------------------------ #
+#                     Functions used in the simulation                     #
+#                     for roe deer population dynamics                     #
+# ------------------------------------------------------------------------ #
 
 
-# ----- Install packages -----
+# ----- Install packages needed -----
 
 # - Distribution packages:
 # Install gtools for the Dirichlet Distribution
@@ -70,19 +43,6 @@ if(!require(tictoc)){
 }
 
 
-# - Unused packages:
-# Install popbio for analysis
-# if(!require(popbio)){
-#   install.packages("popbio")
-#   library(popbio)
-# } # (used for calculating elasticities in Nilsen et al., 2009)
-
-# Install packages to plot life cycle diagram (not important)
-# if(!require(Rage, DiagrammeR)){
-#   install.packages("Rage", "DiagrammeR")
-#   library(Rage, DiagrammeR)
-# }
-
 
 # ----- *Functions* -----
 
@@ -98,30 +58,15 @@ Stoch.init <- function(density, name, area, variation = 0.1, stoch = T){
   # variation is the proportion variation around the initial density
   # stoch permit the turn ON/OFF the stochasticity
   # ---
-  if (name[1] == "Jroe.F"){
-    if (isTRUE(stoch)){
-      # Number of individuals in every stage at t0 with 10% variation
-      N.pop <- round(runif(1, density*area - (density*area*variation), density*area + (density*area*variation)))
-      # Population abundance vector
-      N.init <- VectorPop(round(rdirichlet(1, c(30, 20, 15, 30, 30, 15, 30))
-                                * N.pop), name)
-    } else { # Start at stable stage for each species with fixed initial density
-      source("MPM_load_parameters.R")
-      N.init <- N.roe.init
-    }
-  } else if (name[1] == "Jlyn.F") {
-    if (isTRUE(stoch)){
-      # Number of individuals in every stage at t0 with 10% variation
-      N.pop <- round(runif(1, (density/100)*area - ((density/100)*area*variation), (density/100)*area + ((density/100)*area*variation)))
-      # Population abundance vector
-      N.init <- VectorPop(round(rdirichlet(1, c(30, 30, 15, 30, 30, 30, 30))
-                                * N.pop), name)
-    } else {  # Start at stable stage for each species with fixed initial density
-      source("MPM_load_parameters.R")
-      N.init <- N.lyn.init
-    }
-  } else {
-    stop("Species unknown")
+  if (isTRUE(stoch)){
+    # Number of individuals in every stage at t0 with 10% variation
+    N.pop <- round(runif(1, density*area - (density*area*variation), density*area + (density*area*variation)))
+    # Population abundance vector
+    N.init <- VectorPop(round(rdirichlet(1, c(30, 20, 15, 30, 30, 15, 30))
+                              * N.pop), name)
+  } else { # Start at the initial state from fixed initial density in the parameter file
+    source("MPM_load_parameters.R")
+    N.init <- N.roe.init
   }
   return(N.init)
 }
@@ -146,6 +91,8 @@ VectorPop <- function(vec.abund, vec.name = NULL){
   return(N.pop.init)
 }
 
+
+
 # - Reproduction function -----------------------------------------------------
 
 Repro <- function(repro.type, sex, k, h=1, a=25, Nb.female, Nb.male){
@@ -153,6 +100,7 @@ Repro <- function(repro.type, sex, k, h=1, a=25, Nb.female, Nb.male){
     # ---
     # Harmonic Fertility Function
     # This function calculate the contribution of each sex to the reproduction
+    # used in Caswell, 2001 - Gerber & White, 2014
     # ---
     # Sex allows to differentiate between male or female fertility function
     # k is the average litter size
@@ -226,52 +174,6 @@ Repro <- function(repro.type, sex, k, h=1, a=25, Nb.female, Nb.male){
   }
 }
 
-# Female Fertility Function
-ReproF <- function(k, h=1, Nb.female, Nb.male){
-  # ---
-  # Female Fertility Function
-  # This function calculate female fertility
-  # considering the sex ratio of male/female in the model
-  # allowing for polygamous reproduction
-  # ---
-  # k is the average litter size
-  # h is the number of female per male for reproduction, h=1 is monogamous
-  # Nb.female and Nb.male is the number of individuals in each sex
-  # ---
-  Fertility <- k * min(1, Nb.male/(Nb.female/h))
-  
-  if (Nb.female == 0 || Nb.male == 0 || is.na(Nb.female) || is.na(Nb.male)){
-    Fertility <- 0
-  }
-  return(Fertility)
-}
-
-# Harmonic Fertility Function
-ReproHFF <- function(sex, k, h, Nb.female, Nb.male){
-  # ---
-  # Harmonic Fertility Function
-  # This function calculate the contribution of each sex to the reproduction
-  # ---
-  # Sex allows to differentiate between male or female fertility function
-  # k is the average litter size
-  # h is the number of female per male for reproduction
-  # Nb.female and Nb.male is the number of individuals in each sex
-  # ---
-  Ff <- (k*Nb.male)/(Nb.male + Nb.female/h)
-  Fm <- (k*Nb.female)/(Nb.male + Nb.female/h)
-  if (Nb.female == 0 || Nb.male == 0 || is.na(Nb.female) || is.na(Nb.male)){
-    Ff <- 0
-    Fm <- 0
-  }
-  if (sex == "F"){
-    return(Ff)
-  } else if (sex == "M") {
-    return(Fm)
-  } else {
-    stop("Error in sex reproduction parameter")
-  }
-} # Caswell, 2001 - Gerber & White, 2014
-
 
 
 # - Survival functions ---------------------------------------------------------
@@ -293,41 +195,11 @@ Srate <- function(mortality.rates){
     Sx <- Sx - mortality.rates[i]
   }
   if (Sx <= 0){
-    Sx <- 0.01 # Because it is not possible that everyone die..?
+    Sx <- 0.01 # Not everyone die at once
   }
   return(Sx)
 }
 
-# Lynx kill rate
-TypeIIKillRate <- function(kill.rate, h, prey.density, days.unit){
-  # ---
-  # Type II functional response kill rate
-  # ---
-  # kill.rate is the asymptotic kill rate when prey density is high (in roe deer per X days)
-  # h is the half saturation density of the prey
-  # prey.density is the current total prey density
-  # days.unit is the number of days in which is expressed the kill rate
-  # ---
-  pred.tot <- ((kill.rate*(30/days.unit)) * prey.density)/(h + prey.density)
-  return(pred.tot)
-}
-
-
-ExploreKillRate <- function(kill.rate, prey.density, a, days.unit){
-  # ---
-  # Kill rate response to density
-  # ---
-  # kill.rate is the kill rate when prey density is high (in roe deer per X days)
-  # h is the half saturation density of the prey
-  # prey.density is the current total prey density
-  # days.unit is the number of days in which is expressed the kill rate
-  # ---
-  pred.tot <- a*prey.density
-  if (a*prey.density >= kill.rate*(30/days.unit)){
-    pred.tot <- kill.rate*(30/days.unit)
-  }
-  return(pred.tot)
-}
 
 
 # Lynx predation mortality
@@ -461,13 +333,7 @@ HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, sel
   }
 }
 
-# HuntingHarvest("F", pop = sum(N.roe),
-#                pop.goal = roe.goal*study.area,
-#                pop.threshold = 300,
-#                prop.hunt = m.hunting.r,
-#                select.hunt = hunt.aroem,
-#                fem.prop = (N.roe[3] * hunt.proef + N.roe[4] * hunt.aroef)/N.roe[7],
-#                hunting.type = "relaxed")
+
 
 # Red fox predation mortality
 RedFox <- function(redfox, redfoxHL, predation = "fixed"){
@@ -518,6 +384,8 @@ SnowEvent <- function(snow.rate, snow.freq, snow.event = F){
   return(snow)
 }
 
+
+
 # Stop hunting function
 StopHunt <- function(snow.mortality, hunting.type, stop.hunting = F){
   # ---
@@ -537,15 +405,6 @@ StopHunt <- function(snow.mortality, hunting.type, stop.hunting = F){
 
 
 
-# - Dispersal function --------------------------------------------------------
-
-# Drate <- function(density, distance = NULL){
-#   rate <- + - g*density
-#   return(rate)
-# } # Dispersal when it is density dependent
-
-
-
 # - Density dependence function -----------------------------------------------
 # Roe deer density dependence
 DDroe <- function(N.density){
@@ -557,42 +416,6 @@ DDroe <- function(N.density){
   # ---
   m.juv <- 0.015*N.density - 0.15
   return(max(0, m.juv, na.rm = T))
-}
-
-
-# Lynx density dependence
-DDlynx <- function(N.density, reproba, prey.density = NULL){
-  # ---
-  # This DD function will affect the proportion of female that can reproduce
-  # ---
-  # N.density is the number of lynx per 100 square kilometre
-  # prey.density is the number of prey per square kilometre
-  # reproba is the proportion female giving birth for the two stages of female
-  # ---
-  f.prob <- reproba
-  if (is.null(prey.density)) { # No prey density in the model
-    f.prob[1] <- max(0, reproba[1] - 0.25*N.density + 0.075)
-    f.prob[2] <- max(0.1, reproba[2] - 0.15*N.density + 0.045)
-    
-  } else {
-    if (is.na(prey.density)){
-      prey.density <- 0
-    }
-    if (is.na(N.density)){
-      N.density <- 0
-    }
-    if (is.infinite(prey.density/N.density) || is.na(prey.density/N.density) || prey.density/N.density >= 4) { # Prey density is high enough
-      f.prob[1] <- max(0, reproba[1] - 0.25*N.density)
-      f.prob[2] <- max(0.15, reproba[2] - 0.15*N.density)
-    
-    } else { # Prey density is too low
-      # f.prob[1] <- max(0, reproba[1] - 0.75*(N.density/prey.density))
-      # f.prob[2] <- max(0.15, reproba[2] - 0.5*(N.density/prey.density))
-      f.prob[1] <- max(0, reproba[1] - 0.25*N.density - 0.1/prey.density)
-      f.prob[2] <- max(0.15, reproba[2] - 0.15*N.density - 0.1/prey.density)
-    }
-  }
-  return(f.prob)
 }
 
 
@@ -647,8 +470,6 @@ MPM <- function(name.stages, rho, Fx, NDx, Sx){
 
 # - Data preparation function -------------------------------------------------
 
-# Test with:
-# data <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_fixed-lynx_selective-hunt_biased.M13.8percent.rds")
 
 # From array to dataframe
 ArrayToDataframe <- function(simulation){
@@ -662,19 +483,6 @@ ArrayToDataframe <- function(simulation){
   return(pop)
 }
 
-
-# Sex ratio of in the population
-# SexRatioCheck <- function(simulation){
-#   # ---
-#   #
-#   # ---
-#   data <- ArrayToDataframe(simulation)
-#   sexratio <- data.frame()
-#   # Column: simulation, time, sumFemale, sumMale, ratio
-#   
-#   return(sexratio)
-# }
-# /!\ To be made?
 
 
 # Create the population sum
@@ -832,178 +640,9 @@ StateProp <- function(simulation, Ne, Ni){
   return(state.pivot)
 }
 
-# --- Predator-prey data preparation:
-# One predator-prey data frame
-PredPreyDataframe <- function(pred.simulation, prey.simulation){
-  # ---
-  #
-  # ---
-  predprey <- ArrayToDataframe(pred.simulation)
-  predprey[, 5:6] <- ArrayToDataframe(prey.simulation)[, 3:4]
-  colnames(predprey) <- c("simulation", "time", "stage.predator", "predator", "stage.prey", "prey")
-  return(predprey)
-} # Useless...
 
-
-# Predator-prey ratio and growth rate
-PredPreyRatioGR <- function(pred.simulation, prey.simulation){
-  # ---
-  #
-  # ---
-  pred.pop <- PopSum(pred.simulation)
-  prey.pop <- PopSum(prey.simulation)
-  ratioGR <- pred.pop
-  ratioGR[, 4] <- prey.pop[, 3]
-  ratioGR[, 5:6] <- GrowthRate(pred.simulation)[, 4:5]
-  ratioGR[, 7:8] <- GrowthRate(prey.simulation)[, 4:5]
-  # For each simulation number and each time, calculate the ratio between predator and prey
-  # OR pred.pop[, 3]/prey.pop[, 3]
-  # OR prey.pop[, 3]/(prey.pop[, 3] + pred.pop[, 3])
-  # OR pred.pop[, 3]/(prey.pop[, 3] + pred.pop[, 3])
-  ratioGR[, 9] <- log(prey.pop[, 3]/pred.pop[, 3])
-  for (i in 1:nrow(ratioGR)){
-    if (pred.pop[i, 3] == 0 | prey.pop[i, 3] == 0){
-    ratioGR[i, 9] <- NA
-    }
-  }
-  colnames(ratioGR) <- c("simulation", "time", "predator", "prey",
-                         "lambda.pred", "GR.pred",
-                         "lambda.prey", "GR.prey",
-                         "ratio")
-  return(ratioGR)
-}
-
-# PredPreyRatioGR(Simulation.lyn, Simulation.roe)
-
-PredPreyQuantile <- function(pred.simulation, prey.simulation){
-  # ---
-  # 
-  # ---
-  predprey <- PredPreyRatioGR(pred.simulation, prey.simulation)
-  predprey.quant <- data.frame()
-  for (i in 1:max(predprey$time)){
-    predprey.quant[i, 1] <- i # time
-    # --- Predator growth rate:
-    # Lambda predator
-    predprey.quant[i, 2] <- quantile(predprey[which(predprey$time == i), "lambda.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[1] #0%
-    predprey.quant[i, 3] <- quantile(predprey[which(predprey$time == i), "lambda.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[2] #5%
-    predprey.quant[i, 4] <- quantile(predprey[which(predprey$time == i), "lambda.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[3] #25%
-    predprey.quant[i, 5] <- quantile(predprey[which(predprey$time == i), "lambda.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[4] #50%
-    predprey.quant[i, 6] <- quantile(predprey[which(predprey$time == i), "lambda.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[5] #75%
-    predprey.quant[i, 7] <- quantile(predprey[which(predprey$time == i), "lambda.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[6] #95%
-    predprey.quant[i, 8] <- quantile(predprey[which(predprey$time == i), "lambda.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[7] #100%
-    predprey.quant[i, 9] <- mean(predprey[which(predprey$time == i), "lambda.pred"], na.rm = T) # Mean
-    
-    # Growth rate percentage predator
-    predprey.quant[i, 10] <- quantile(predprey[which(predprey$time == i), "GR.pred"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[1] #0%
-    predprey.quant[i, 11] <- quantile(predprey[which(predprey$time == i), "GR.pred"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[2] #5%
-    predprey.quant[i, 12] <- quantile(predprey[which(predprey$time == i), "GR.pred"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[3] #25%
-    predprey.quant[i, 13] <- quantile(predprey[which(predprey$time == i), "GR.pred"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[4] #50%
-    predprey.quant[i, 14] <- quantile(predprey[which(predprey$time == i), "GR.pred"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[5] #75%
-    predprey.quant[i, 15] <- quantile(predprey[which(predprey$time == i), "GR.pred"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[6] #95%
-    predprey.quant[i, 16] <- quantile(predprey[which(predprey$time == i), "GR.pred"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[7] #100%
-    predprey.quant[i, 17] <- mean(predprey[which(predprey$time == i), "GR.pred"], na.rm = T) # Mean
-    
-    # --- Prey growth rate:
-    # Lambda prey
-    predprey.quant[i, 18] <- quantile(predprey[which(predprey$time == i), "lambda.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[1] #0%
-    predprey.quant[i, 19] <- quantile(predprey[which(predprey$time == i), "lambda.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[2] #5%
-    predprey.quant[i, 20] <- quantile(predprey[which(predprey$time == i), "lambda.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[3] #25%
-    predprey.quant[i, 21] <- quantile(predprey[which(predprey$time == i), "lambda.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[4] #50%
-    predprey.quant[i, 22] <- quantile(predprey[which(predprey$time == i), "lambda.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[5] #75%
-    predprey.quant[i, 23] <- quantile(predprey[which(predprey$time == i), "lambda.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[6] #95%
-    predprey.quant[i, 24] <- quantile(predprey[which(predprey$time == i), "lambda.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[7] #100%
-    predprey.quant[i, 25] <- mean(predprey[which(predprey$time == i), "lambda.prey"], na.rm = T) # Mean
-    
-    # Growth rate percentage prey
-    predprey.quant[i, 26] <- quantile(predprey[which(predprey$time == i), "GR.prey"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[1] #0%
-    predprey.quant[i, 27] <- quantile(predprey[which(predprey$time == i), "GR.prey"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[2] #5%
-    predprey.quant[i, 28] <- quantile(predprey[which(predprey$time == i), "GR.prey"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[3] #25%
-    predprey.quant[i, 29] <- quantile(predprey[which(predprey$time == i), "GR.prey"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[4] #50%
-    predprey.quant[i, 30] <- quantile(predprey[which(predprey$time == i), "GR.prey"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[5] #75%
-    predprey.quant[i, 31] <- quantile(predprey[which(predprey$time == i), "GR.prey"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[6] #95%
-    predprey.quant[i, 32] <- quantile(predprey[which(predprey$time == i), "GR.prey"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[7] #100%
-    predprey.quant[i, 33] <- mean(predprey[which(predprey$time == i), "GR.prey"], na.rm = T) # Mean
-    
-    # --- Ratio predator - prey
-    predprey.quant[i, 34] <- quantile(predprey[which(predprey$time == i), "ratio"],
-                                   c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[1] #0%
-    predprey.quant[i, 35] <- quantile(predprey[which(predprey$time == i), "ratio"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[2] #5%
-    predprey.quant[i, 36] <- quantile(predprey[which(predprey$time == i), "ratio"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[3] #25%
-    predprey.quant[i, 37] <- quantile(predprey[which(predprey$time == i), "ratio"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[4] #50%
-    predprey.quant[i, 38] <- quantile(predprey[which(predprey$time == i), "ratio"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[5] #75%
-    predprey.quant[i, 39] <- quantile(predprey[which(predprey$time == i), "ratio"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[6] #95%
-    predprey.quant[i, 40] <- quantile(predprey[which(predprey$time == i), "ratio"],
-                                    c(0, 0.05, 0.25, 0.5, 0.75, 0.95, 1), na.rm = T)[7] #100%
-    predprey.quant[i, 41] <- mean(predprey[which(predprey$time == i), "ratio"], na.rm = T) # Mean
-  }
-  colnames(predprey.quant) <- c("time", "l.q0.pred", "l.q5.pred", "l.q25.pred",
-                                "l.q50.pred", "l.q75.pred", "l.q95.pred",
-                                "l.q100.pred", "l.mean.pred",
-                                "p.q0.pred", "p.q5.pred", "p.q25.pred",
-                                "p.q50.pred", "p.q75.pred", "p.q95.pred",
-                                "p.q100.pred", "p.mean.pred",
-                                
-                                "l.q0.prey", "l.q5.prey", "l.q25.prey",
-                                "l.q50.prey", "l.q75.prey", "l.q95.prey",
-                                "l.q100.prey", "l.mean.prey",
-                                "p.q0.prey", "p.q5.prey", "p.q25.prey",
-                                "p.q50.prey", "p.q75.prey", "p.q95.prey",
-                                "p.q100.prey", "p.mean.prey",
-                                
-                                "ratio.q0", "ratio.q5", "ratio.q25",
-                                "ratio.q50", "ratio.q75", "ratio.q95",
-                                "ratio.q100", "ratio.mean")
-  return(predprey.quant)
-}
-
-# PredPreyQuantile(Simulation.lyn, Simulation.roe)
 
 # - Plot function -------------------------------------------------------------
-# Future improvements:
-# Change theme font?
-
-# Try with data:
-# Simulation.roe <- readRDS("Repro_FemaleFF-stoch_norm-roe25_500-fox_none-lynx_none-hunt_none.rds")
-# Roe.sumpop <- PopSum(Simulation.roe)
-# Roe.quant <- PopQuantile(Simulation.roe)
-# GR.roe <- GrowthRate(Simulation.roe)
-# GR.roe.quant <- GrowthRateQuantile(Simulation.roe)
-# Roe.state <- StateProp(Simulation.roe, Ne=sum(N.roe.init)/50, Ni=40*study.area)
-
 
 DensityPlot <- function(data, study.area, species, x.years = NULL, y.lim = NULL, carrying.capacity = NULL){
   # Prepare data
@@ -1027,9 +666,8 @@ DensityPlot <- function(data, study.area, species, x.years = NULL, y.lim = NULL,
          y = case_when(species == "Lynx" ~ "Population density (N/100km2)",
                        species == "Roe deer" ~ "Population density (N/km2)"))
 }
-# Check code
-# DensityPlot(Simulation.roe, study.area, "Roe deer")
-# DensityPlot(Simulation.lyn, study.area, "Lynx")
+
+
 
 GrowthRatePlot <- function(data, study.area, species, x.years = NULL){
   # Prepare data
@@ -1050,8 +688,8 @@ GrowthRatePlot <- function(data, study.area, species, x.years = NULL){
     ylim(0, 2) +
     labs(title = paste(species, "population growth rate"), x = "Time (Years)", y = "Population growth rate (λ)")
 }
-# Check code
-# GrowthRatePlot(Simulation.roe, study.area, "Any species", 25)
+
+
 
 StatePropPlot <- function(data, study.area, species, Ne, Ni, x.years = NULL){
   # Prepare data
@@ -1065,65 +703,6 @@ StatePropPlot <- function(data, study.area, species, Ne, Ni, x.years = NULL){
           axis.text = element_text(size = 15)) +
     xlim(0, min(x.years, max(data.state$time))) +
     labs(title = "State proportion of populations", x = "Time (Years)", y = "Proportion (%)")
-}
-# Check code
-# StatePropPlot(Simulation.roe, study.area, "Any species", Ne=sum(N.roe.init)/20, Ni=40*study.area, 25)
-
-
-# Plot the 3 together:
-# DGRSPPlot <- function(data, study.area, species, Ne, Ni){
-#   # Data preparation
-#   
-#   # Plot 1, 2, 3
-#   library(patchwork)
-#   
-#   (pl_1 | pl_2 | pl_3) /
-#     (pl_1 | pl_2 | pl_3) /
-#     (pl_1 | pl_2 | pl_3)
-#   
-#   
-#   # Save it!
-# }
-
-# Gradient plot for immigration and lynx predation?
-
-# Initial gradient density plots
-# Population density plots
-GradientPlotPopDensity <- function(data, species){
-  # ---
-  # 
-  # ---
-  ggplot(data, aes(x=roe, y=lynx, fill=mean)) +
-    geom_tile() +
-    scale_fill_gradientn(colours = c("gainsboro", "darkolivegreen", "black"),
-                         limits = c(0, max(
-                           case_when(species == "Lynx" ~ 3,
-                                     species == "Roe deer" ~ 30),
-                           max(data$mean)))) +
-    labs(title = paste(species, "population density") ,
-         x = "Roe deer initial density (N/km2)",
-         y = "Lynx initial density (N/100km2)",
-         fill = "Population\ndensity") +
-    theme(legend.key.height= unit(1.5, 'cm'),
-          text = element_text(size = 15),
-          axis.text = element_text(size = 15))
-}
-
-
-GradientPlotGR <- function(data, species){
-  ggplot(data, aes(x=roe, y=lynx, fill=lambda)) +
-  geom_tile() +
-  scale_fill_gradientn(colours = c("darkred", "white",
-                                   "powderblue", "cadetblue3", "cadetblue",
-                                   "paleturquoise4", "darkslategray"),
-                       limits = c(0, max(6, max(data$lambda)))) +
-  labs(title = paste(species, "growth rate"),
-       x = "Roe deer initial density (N/km2)",
-       y = "Lynx initial density (N/100km2)",
-       fill = "Lambda") +
-  theme(legend.key.height= unit(1.5, 'cm'),
-        text = element_text(size = 15),
-        axis.text = element_text(size = 15))
 }
 
 
