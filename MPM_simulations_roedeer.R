@@ -190,8 +190,7 @@ for (i in 1:nrow(scena)){ # For each combination of scenario
                             "fox_", Redfox.pred, "-",
                             "lynx_", Lynx.pred, "-",
                             "hunt_", Hunting.roe)
-    # - Save matrices for each scenario
-    assign(paste0("mat.list.", scenario_name), mat.roe.list)
+
     # --- Save simulation for each scenario
     saveRDS(Simulation.roe,
             file = paste0(if(isTRUE(Stop.hunt.ON.OFF)){"SH_"},
