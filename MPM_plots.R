@@ -130,16 +130,15 @@ Roe3 <- StatePropPlot(Simulation.roe, study.area, "Roe deer", Ne=sum(N.roe.init)
 # -
 # ----- Roe deer gradient - DATA -----
 # -
-Roerate <- Roe.rate
 
-Roerate <- readRDS("Roedeer-gradientrate-25_500-fox_none-lynx_selective-hunt_none-var10-441.rds")
-Roerate <- readRDS("Roedeer-gradientrate-25_500-fox_fixed-lynx_selective-hunt_none-var10-441.rds")
-Roerate <- readRDS("Roedeer-gradientrate-25_500-fox_fixed-lynx_selective-hunt_selective-var10-441.rds")
+Roerate1 <- readRDS("Roedeer-gradientrate-25_500-fox_none-lynx_selective-hunt_none-var10-441.rds")
+Roerate2 <- readRDS("Roedeer-gradientrate-25_500-fox_fixed-lynx_selective-hunt_none-var10-441.rds")
+Roerate3 <- readRDS("Roedeer-gradientrate-25_500-fox_fixed-lynx_selective-hunt_selective-var10-441.rds")
 
 # -
 # ----- Roe deer gradient - PLOTS -----
 # -
-ggplot(Roerate, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
+Roe1 <- ggplot(Roerate1, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
   geom_tile() +
   scale_fill_gradientn(colours = c("darkred", "orange",
                                    "white"),
@@ -147,9 +146,7 @@ ggplot(Roerate, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
                        labels=c("quasi-extinct", "75%", "50%", "25%","stable"),
                        limits=c(-1, 0)) +
   labs(title = "Roe deer population state proportion
-- Red fox and lynx predation",
-# Choose title depending on sceanario:
-# - Lynx predation only", - Red fox and lynx predation", - Hunting, red fox and lynx predation",
+- Lynx predation only",
        x = "Adult refuge
 (% of refuge from lynx predation)",
        y = "Yearling immigration
@@ -160,29 +157,40 @@ proportion") +
         text = element_text(size = 25),
         axis.text = element_text(size = 25))
 
-
-ggplot(Roerate, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
+Roe2 <- ggplot(Roerate2, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
   geom_tile() +
-  # scale_fill_gradient2(high="lightblue", mid="white", low="darkred",
-  #                      midpoint=0, limits=range(-1, 1)) +
-  # scale_fill_gradientn(colours = c("darkred","red4", "darkorange2", "orange1",
-  #                                  "white",
-  #                                  "powderblue", "cadetblue3", "cadetblue", "paleturquoise4"),
-  scale_fill_gradientn(colours = c("darkred", "firebrick3",
-                                   "white",
-                                   "lightblue", "deepskyblue4"),
+  scale_fill_gradientn(colours = c("darkred", "orange",
+                                   "white"),
                        breaks=c(-1, -0.75, -0.5, -0.25, 0),
                        labels=c("quasi-extinct", "75%", "50%", "25%","stable"),
                        limits=c(-1, 0)) +
   labs(title = "Roe deer population state proportion
-- Hunting, red fox and lynx predation only",
+- Red fox and lynx predation",
        x = "Adult refuge
 (% of refuge from lynx predation)",
        y = "Yearling immigration
 (% of initial population density)",
        fill = "State
 proportion") +
-  ylim(0, 3) +
+  theme(legend.key.height= unit(3, 'cm'),
+        text = element_text(size = 25),
+        axis.text = element_text(size = 25))
+
+Roe3 <- ggplot(Roerate3, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
+  geom_tile() +
+  scale_fill_gradientn(colours = c("darkred", "orange",
+                                   "white"),
+                       breaks=c(-1, -0.75, -0.5, -0.25, 0),
+                       labels=c("quasi-extinct", "75%", "50%", "25%","stable"),
+                       limits=c(-1, 0)) +
+  labs(title = "Roe deer population state proportion
+ - Hunting, red fox and lynx predation",
+       x = "Adult refuge
+(% of refuge from lynx predation)",
+       y = "Yearling immigration
+(% of initial population density)",
+       fill = "State
+proportion") +
   theme(legend.key.height= unit(3, 'cm'),
         text = element_text(size = 25),
         axis.text = element_text(size = 25))
