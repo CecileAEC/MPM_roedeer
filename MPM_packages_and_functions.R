@@ -25,7 +25,7 @@ if(!require(truncnorm)){
 }
 
 # - Tidy plot and data 
-# Install tidyverse for ggplot2 and tidyr
+# Install tidyverse for ggplot2, tidyr and dplyr
 if(!require(tidyverse)){
   install.packages("tidyverse")
   library(tidyverse)
@@ -637,6 +637,7 @@ StateProp <- function(simulation, Ne, Ni){
   colnames(state) <- c("time", "extinct", "irruption", "stable")
   state <- state[, c("time", "extinct", "stable", "irruption")]
   state.pivot <- pivot_longer(state, 2:4, names_to = "state", values_to = "proportion", cols_vary = "slowest")
+  state.pivot$state <- factor(state.pivot$state, levels = c("irruption", "stable", "extinct"))
   return(state.pivot)
 }
 
@@ -696,7 +697,7 @@ StatePropPlot <- function(data, study.area, species, Ne, Ni, x.years = NULL){
   data.state <- StateProp(data, Ne=Ne, Ni=Ni)
   # Plot it
   ggplot(data.state, aes(x=time, y=proportion*100, fill=state)) +
-    geom_col(position = position_stack(reverse = T), width = 0.75) +
+    geom_col(position = "stack", width = 0.75) +
     scale_fill_manual("State", values = c("irruption" = "deepskyblue4", "stable" = "snow3", "extinct" = "darkred")) +
     theme(legend.key.height= unit(2.5, 'cm'),
           text = element_text(size = 15),
