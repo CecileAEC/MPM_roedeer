@@ -12,6 +12,8 @@ source("MPM_packages_and_functions.R")
 # -
 # ----- Load default parameters -----
 # -
+# From:
+# source("MPM_load_parameters.R")
 # You just need:
 study.area <- 10000 # Study area in square kilometre
 roe.density <- 10 # Nb of roe deer per square kilometre
@@ -96,7 +98,7 @@ ggplot(GR.roe.quant) +
 
 # # Roe deer state - PROPORTIONS
 ggplot(Roe.state, aes(x=time, y=proportion*100, fill=state)) +
-  geom_col(position = position_stack(reverse = T), width = 0.75) +
+  geom_col(position = "stack", width = 0.75) +
   scale_fill_manual("State", values = c("irruption" = "deepskyblue4", "stable" = "snow3", "extinct" = "darkred")) +
   theme(legend.key.height= unit(5, 'cm'),
         text = element_text(size = 50),
@@ -108,7 +110,7 @@ ggplot(Roe.state, aes(x=time, y=proportion*100, fill=state)) +
 # --- Three plots from one scenario at once:
 Simulation.roe <- Roesim.list[[1]] # Select which scenario you want to plot from the lists of data
 
-Roe1 <- DensityPlot(Simulation.roe, study.area, "Roe deer", x.years = 25, carrying.capacity = (sum(N.roe.init)/(100/20))/study.area)
+Roe1 <- DensityPlot(Simulation.roe, study.area, "Roe deer", x.years = 25, y.lim = 65)
 Roe2 <- GrowthRatePlot(Simulation.roe, study.area, "Roe deer", x.years = 25)
 Roe3 <- StatePropPlot(Simulation.roe, study.area, "Roe deer", Ne=sum(N.roe.init)/20, Ni=40*study.area, x.years = 25)
 
