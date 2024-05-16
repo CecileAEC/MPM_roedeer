@@ -134,7 +134,7 @@ Roe1 <- ggplot(Roerate1, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
   scale_fill_gradientn(colours = c("darkred", "orange",
                                    "white"),
                        breaks=c(-1, -0.75, -0.5, -0.25, 0),
-                       labels=c("quasi-extinct", "75%", "50%", "25%","stable"),
+                       labels=c("100%", "75%", "50%", "25%","0%"),
                        limits=c(-1, 0)) +
   labs(title = "Roe deer population state proportion
 - Lynx predation only",
@@ -142,7 +142,7 @@ Roe1 <- ggplot(Roerate1, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
 (% of refuge from lynx predation)",
        y = "Yearling immigration
 (% of initial population density)",
-       fill = "State
+       fill = "Extinction
 proportion") +
   theme(legend.key.height= unit(3, 'cm'),
         text = element_text(size = 25),
@@ -153,7 +153,7 @@ Roe2 <- ggplot(Roerate2, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
   scale_fill_gradientn(colours = c("darkred", "orange",
                                    "white"),
                        breaks=c(-1, -0.75, -0.5, -0.25, 0),
-                       labels=c("quasi-extinct", "75%", "50%", "25%","stable"),
+                       labels=c("100%", "75%", "50%", "25%","0%"),
                        limits=c(-1, 0)) +
   labs(title = "Roe deer population state proportion
 - Red fox and lynx predation",
@@ -161,7 +161,7 @@ Roe2 <- ggplot(Roerate2, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
 (% of refuge from lynx predation)",
        y = "Yearling immigration
 (% of initial population density)",
-       fill = "State
+       fill = "Extinction
 proportion") +
   theme(legend.key.height= unit(3, 'cm'),
         text = element_text(size = 25),
@@ -172,7 +172,7 @@ Roe3 <- ggplot(Roerate3, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
   scale_fill_gradientn(colours = c("darkred", "orange",
                                    "white"),
                        breaks=c(-1, -0.75, -0.5, -0.25, 0),
-                       labels=c("quasi-extinct", "75%", "50%", "25%","stable"),
+                       labels=c("100%", "75%", "50%", "25%","0%"),
                        limits=c(-1, 0)) +
   labs(title = "Roe deer population state proportion
  - Hunting, red fox and lynx predation",
@@ -180,7 +180,7 @@ Roe3 <- ggplot(Roerate3, aes(x=ar, y=(yd/sum(N.roe.init))*100, fill=prop25)) +
 (% of refuge from lynx predation)",
        y = "Yearling immigration
 (% of initial population density)",
-       fill = "State
+       fill = "Extinction
 proportion") +
   theme(legend.key.height= unit(3, 'cm'),
         text = element_text(size = 25),
