@@ -93,7 +93,7 @@ for (i in 1:nrow(scena)){ # For each combination of scenario
       m.snow <- SnowEvent(snow.rate = snow.magnitude, snow.freq = snow.frequency, Snow.ON.OFF)
       # - Survival function from mortality rates:
       S.Jroef <- Srate(c(m.jroef, m.dens,
-                         RedFox(m.redfox, redfox.HL, Redfox.pred),
+                         RedFox(redfox = m.redfox, predation = Redfox.pred),
                          LynxPred(roe.select = pred.jroef, lynx.pred = Lynx.pred),
                          HuntingHarvest("F", pop = sum(N.roe), pop.goal = roe.goal*study.area, prop.hunt = m.hunting.r, select.hunt = hunt.jroef, hunting.type = Hunting.roe),
                          m.snow))
@@ -111,7 +111,7 @@ for (i in 1:nrow(scena)){ # For each combination of scenario
                          m.snow))
   
       S.Jroem <- Srate(c(m.aroef, m.dens,
-                         RedFox(m.redfox, redfox.HL, Redfox.pred),
+                         RedFox(redfox = m.redfox, predation = Redfox.pred),
                          LynxPred(roe.select = pred.jroem, lynx.pred = Lynx.pred),
                          HuntingHarvest("M", pop = sum(N.roe), pop.goal = roe.goal*study.area, prop.hunt = m.hunting.r, select.hunt = hunt.jroem, fem.prop = (N.roe[1] * hunt.jroef)/N.roe[5], hunting.type = Hunting.roe),
                          m.snow))
@@ -313,7 +313,7 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
         m.snow <- SnowEvent(snow.rate = snow.magnitude, snow.freq = snow.frequency, Snow.ON.OFF)
         # - Survival function from mortality rates:
         S.Jroef <- Srate(c(m.jroef, m.dens,
-                           RedFox(m.redfox, redfox.HL, Redfox.pred),
+                           RedFox(redfox = m.redfox, predation = Redfox.pred),
                            LynxPred(roe.select = pred.jroef, lynx.pred = Lynx.pred),
                            HuntingHarvest("F", pop = sum(N.roe), pop.goal = roe.goal*study.area, prop.hunt = m.hunting.r, select.hunt = hunt.jroef, hunting.type = Hunting.roe),
                            m.snow))
@@ -331,7 +331,7 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
                            m.snow))
     
         S.Jroem <- Srate(c(m.aroef, m.dens,
-                           RedFox(m.redfox, redfox.HL, Redfox.pred),
+                           RedFox(redfox = m.redfox, predation = Redfox.pred),
                            LynxPred(roe.select = pred.jroem, lynx.pred = Lynx.pred),
                            HuntingHarvest("M", pop = sum(N.roe), pop.goal = roe.goal*study.area, prop.hunt = m.hunting.r, select.hunt = hunt.jroem, hunting.type = Hunting.roe),
                            m.snow))
