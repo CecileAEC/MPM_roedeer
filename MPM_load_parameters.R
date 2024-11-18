@@ -79,7 +79,7 @@ pr1.r <- 0.778 # Proportion of female that first reproduce
 pr2.r <- 0.846 # Proportion of adult female that reproduce
 pr.r <- c(pr1.r, pr2.r) # Breeding proportion vector
 h.r <- 10 # Number of female that a male can reproduce with during the season
-alpha.r <- 25 # Strength parameter of the exponential penalty function
+# alpha.r <- 25 # Strength parameter of the exponential penalty function
 
 
 
@@ -97,9 +97,9 @@ m.aroem <- 0.162
 
 # Additional mortality factor:
 m.redfox <- 0.26 # Red fox predation mortality rate (Melis et al., 2013)
-redfox.HL <- c(0.183, 0.343) # High and low redfox predation
+# redfox.HL <- c(0.183, 0.343) # High and low redfox predation
 
-m.lynxpred <- 0.143 # Fixed proportion of the population (Melis et al., 2013) # Removed from function!
+# m.lynxpred <- 0.143 # Fixed proportion of the population (Melis et al., 2013) # Removed from function!
 pred.jroef <- 0.141 # Predation proportion of each stage (Melis et al., 2013)
 pred.yroef <- 0.131 # Predation proportion of each stage (Melis et al., 2013)
 pred.proef <- 0.140 # Predation proportion of each stage (Melis et al., 2013)
@@ -109,7 +109,7 @@ pred.yroem <- 0.213 # Predation proportion of each stage (Melis et al., 2013)
 pred.aroem <- 0.152 # Predation proportion of each stage (Melis et al., 2013)
 
 
-m.hunting.r <- 0.138 # Fixed proportion of the population harvested (Melis et al., 2013)
+# m.hunting.r <- 0.138 # Fixed proportion of the population harvested (Melis et al., 2013)
 hunt.jroef <- 0.111 # Hunting proportion of each stage (selection) (Melis et al., 2013)
 hunt.yroef <- 0.323 # Hunting proportion of each stage (selection) (Melis et al., 2013)
 hunt.proef <- 0.076 # Hunting proportion of each stage (selection) (Melis et al., 2013)
