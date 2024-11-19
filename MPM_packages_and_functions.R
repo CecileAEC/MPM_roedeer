@@ -203,7 +203,7 @@ Srate <- function(mortality.rates){
 
 
 # Lynx predation mortality
-LynxPred <- function(kill.rate = NULL, months.pred = NULL, lynx.hunter = NULL, roe.tot = NULL, roe.select = NULL, lynx.pred = "predator"){
+LynxPred <- function(kill.rate = NULL, months.pred = NULL, lynx.hunter = NULL, roe.tot = NULL, roe.select = NULL, lynx.pred){
   # ---
   # Function using kill rate of lynx per 30 days
   # ---
@@ -221,6 +221,9 @@ LynxPred <- function(kill.rate = NULL, months.pred = NULL, lynx.hunter = NULL, r
     if (is.null(lynx.hunter)){
       stop("Lynx population not found")
     }
+    if (is.null(kill.rate) || is.null(months.pred) || is.null(roe.tot)){
+      stop("kill.rate, months.pred and roe.tot arguments need to be filled")
+    }
     for (i in 1:length(lynx.hunter)){
       pred.tot <- pred.tot + kill.rate[i]*months.pred*lynx.hunter[i]
     }
@@ -236,6 +239,9 @@ LynxPred <- function(kill.rate = NULL, months.pred = NULL, lynx.hunter = NULL, r
     return(pred.rate) # Proportion of roe deer killed by lynx in the population
     
   } else if (lynx.pred == "selective") {
+    if (is.null(roe.select)){
+      stop("Predation rate not found")
+    }
     pred.rate <- roe.select
     return(pred.rate)
   } else if (lynx.pred == "none") {
@@ -248,7 +254,7 @@ LynxPred <- function(kill.rate = NULL, months.pred = NULL, lynx.hunter = NULL, r
 
 
 # Hunting mortality
-HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, select.hunt, fem.prop, hunting.type = "none"){
+HuntingHarvest <- function(sex = NULL, pop = NULL, pop.goal = NULL, pop.threshold = 0, prop.hunt = NULL, select.hunt = NULL, fem.prop = NULL, hunting.type){
   # ---
   # The function aims to add an extra mortality to imitate hunting quota.
   # When the population is approaching the quota, hunters will start to hunt 10% of the population.
@@ -272,6 +278,9 @@ HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, sel
     # "none" is for no hunting
   # ---
   if (hunting.type == "biased"){
+    if (is.null(select.hunt) || is.null(fem.prop)){
+      stop("select.hunt and fem.prop arguments need to be filled")
+    }
     if (sex == "M"){
       if (is.na(fem.prop) | is.infinite(fem.prop)){
         fem.prop <- 0
@@ -286,6 +295,9 @@ HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, sel
     }
     
   } else if (hunting.type == "goal"){
+    if (is.null(pop.goal)){
+      stop("Population goal argument is missing")
+    }
     if (pop >= pop.goal - 0.25*pop.goal){
       hunting.rate <- 0.1
       if (pop >= pop.goal + 0.25*pop.goal){
@@ -297,6 +309,9 @@ HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, sel
     return(hunting.rate)
 
   } else if (hunting.type == "relaxed"){
+    if (is.null(select.hunt) || is.null(pop.threshold)){
+      stop("select.hunt and pop.threshold arguments need to be filled")
+    }
     if (pop <= pop.threshold){
       if (sex == "F"){
         hunting.rate <- 0
@@ -309,6 +324,9 @@ HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, sel
     return(hunting.rate)
     
   } else if (hunting.type == "stopped"){
+    if (is.null(select.hunt) || is.null(pop.threshold)){
+      stop("select.hunt and pop.threshold arguments need to be filled")
+    }
     if (pop <= pop.threshold){
       hunting.rate <- 0
     } else {
@@ -317,10 +335,16 @@ HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, sel
     return(hunting.rate)
       
   } else if (hunting.type == "fixed"){
+    if (is.null(prop.hunt)){
+      stop("Hunting proportion is missing")
+    }
     hunting.rate <- prop.hunt
     return(hunting.rate)
     
   } else if (hunting.type == "selective"){
+    if (is.null(select.hunt)){
+      stop("select.hunt argument is missing")
+    }
     hunting.rate <- select.hunt
     return(hunting.rate)
     
@@ -336,7 +360,7 @@ HuntingHarvest <- function(sex, pop, pop.goal, pop.threshold = 0, prop.hunt, sel
 
 
 # Red fox predation mortality
-RedFox <- function(redfox, redfoxHL, predation = "fixed"){
+RedFox <- function(redfox = NULL, redfoxHL = NULL, predation){
   # ---
   # This function is used to change the magnitude of the red fox predation on fawns
   # From low red foxes predation to high red foxes predation
@@ -346,14 +370,23 @@ RedFox <- function(redfox, redfoxHL, predation = "fixed"){
   # predation is the argument to set the type of predation you want to use
   # ---
   if (predation == "fixed"){
+    if (is.null(redfox)){
+      stop("Red fox predation rate is missing")
+    }
     rate <- redfox
     return(rate)
     
   } else if (predation == "low"){
+    if (is.null(redfox)){
+      stop("High and low red fox predation rates argument is missing")
+    }
     rate <- min(redfoxHL)
     return(rate)
     
   } else if (predation == "high"){
+    if (is.null(redfox)){
+      stop("High and low red fox predation rates argument is missing")
+    }
     rate <- max(redfoxHL)
     return(rate)
     
