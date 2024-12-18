@@ -34,8 +34,7 @@ Redfox.predation <- c("fixed", "none") # "low", "high",
 Lynx.predation <- c("selective", "none")
 # Hunting type:
 # "biased", "goal", "relaxed", "stopped", "fixed", "selective", "none"
-Hunting.type.roe <- c("selective", "relaxed", "stopped", "none")
-Hunting.type.lynx <- c("goal", "selective", "none")
+Hunting.type.roe <- c("selective", "none")
 Snow.ON.OFF <- F # ON:True or OFF:False
 Stop.hunt.ON.OFF <- F # ON:True or OFF:False
 
