@@ -249,9 +249,8 @@ Simulation.roe <- array(rep(NA, length(N.roe.init)*nYears*nb.sim),
                         list(nameRoeDeer, seq(0, nYears),
                              paste('sim', seq(1, nb.sim))))
 
-library("tictoc")
 # --- Start simulation
-tic("scenario")
+# tic("scenario")
 for (sc in 1:nrow(scena)){ # For each combination of scenario
 
   # - Initialise scenarios:
@@ -266,7 +265,7 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
                                paste('sim', seq(1, nb.sim))))
   # --- Start simulation
   Roe.rate <- data.frame()
-  tic("simulation")
+  # tic("simulation")
   for (g in 1:nrow(grad)){ # For each step in the gradient
     
     # Each step in the gradient:
@@ -492,9 +491,9 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
                           "hunt_", Hunting.roe, ".rds"))
   
   }
-  toc("simulation")
+  # toc()
 }
-toc("scenario")
+# toc()
 
 
 
