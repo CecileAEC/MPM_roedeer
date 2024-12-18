@@ -33,8 +33,9 @@ nYears <- 25
 
 # Initialise scenario
 scena <- expand.grid("redfox" = Redfox.predation,
-                     "lynx" = Lynx.predation,
+                     "lynx" = "selective",
                      "hunt" = Hunting.type.roe)
+scena <- scena[1:3, ] # Select only the scenario you need
 
 # Initialise the simulation array:
 Simulation.roe <- array(rep(NA, length(N.roe.init)*nYears*nb.sim),
