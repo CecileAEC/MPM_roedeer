@@ -33,9 +33,8 @@ nYears <- 25
 
 # Initialise scenario
 scena <- expand.grid("redfox" = Redfox.predation,
-                     "lynx" = "selective",
+                     "lynx" = Lynx.predation,
                      "hunt" = Hunting.type.roe)
-scena <- scena[1:3, ] # Select only the scenario you need
 
 # Initialise the simulation array:
 Simulation.roe <- array(rep(NA, length(N.roe.init)*nYears*nb.sim),
@@ -239,8 +238,9 @@ grad <- expand.grid("yd" = yearling.grad, "ar" = adult.grad)
 
 # Initialise scenario
 scena <- expand.grid("redfox" = Redfox.predation,
-                     "lynx" = Lynx.predation,
+                     "lynx" = "selective",
                      "hunt" = Hunting.type.roe)
+scena <- rbind(scena[1, ], scena[3:4, ]) # Select only the scenario you need
 
 # Initialise the simulation array:
 Simulation.roe <- array(rep(NA, length(N.roe.init)*nYears*nb.sim),
@@ -385,8 +385,18 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
   
         
         # --- Dispersal rate ---
-        # NDf.r <- 0 # Natal dispersal rate female
-        # NDm.r <- 0 # Natal dispersal rate male
+        # Calculating the immigration rate according to the population
+        # so the amount of individuals stays the same
+        if (Simulation.roe[2, t-1, s] > 0) {
+          NDf.r <- (yd/2)/Simulation.roe[2, t-1, s] # Natal dispersal rate female
+        } else {
+          NDf.r <- 0
+        }
+        if (Simulation.roe[6, t-1, s] > 0) {
+          NDm.r <- (yd/2)/Simulation.roe[6, t-1, s] # Natal dispersal rate male
+        } else{
+          NDm.r <- 0
+        }
         ND.roe <- c(NDf.r, NDm.r)
         
         
@@ -396,9 +406,13 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
         
         # ----- Run the MPM:
         Simulation.roe[, t, s] <- pmax(round(mat.roe %*% Simulation.roe[, t-1, s], digit = 0), 0)
-        # Additional dispersal...
-        Simulation.roe[2, t, s] <- Simulation.roe[2, t, s] + yd/2 #Yearling female
-        Simulation.roe[6, t, s] <- Simulation.roe[6, t, s] + yd/2 #Yearling male
+        # Additional dispersal when there is no yearling in the model:
+        if (Simulation.roe[2, t-1, s] == 0) {
+          Simulation.roe[2, t, s] <- Simulation.roe[2, t, s] + yd/2 #Yearling female
+        }
+        if (Simulation.roe[6, t-1, s] == 0) {
+          Simulation.roe[6, t, s] <- Simulation.roe[6, t, s] + yd/2 #Yearling male
+        }
         
         # Save population abundance
         # or stop running if population reaches quasi extinction:
@@ -428,9 +442,9 @@ for (sc in 1:nrow(scena)){ # For each combination of scenario
         }
       }
       colnames(Roe.state) <- c("sumpop25", "state25",
-                             "sumpop20", "state20",
-                             "sumpop15", "state15",
-                             "sumpop10", "state10")
+                               "sumpop20", "state20",
+                               "sumpop15", "state15",
+                               "sumpop10", "state10")
     }
     
     print(paste("yd:", yd/1000, "ar:", ar, "| Done:", round((g/nrow(grad))*100), "%"))
