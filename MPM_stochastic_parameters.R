@@ -46,7 +46,7 @@ if (exists("Simulation.roe")){
     m.redfox <- rtruncnorm(1, a=0, b=1, mean = m.redfox, sd=0.047)
     
     # --- Lynx predation mortality:
-    m.lynxpred <- rtruncnorm(1, a=0, b=1, mean = m.lynxpred, sd=0.027)
+    # m.lynxpred <- rtruncnorm(1, a=0, b=1, mean = m.lynxpred, sd=0.027)
     
     pred.jroef <- rtruncnorm(1, a=0, b=1, mean = pred.jroef, sd=0.049)
     pred.yroef <- rtruncnorm(1, a=0, b=1, mean = pred.yroef, sd=0.083)
@@ -58,7 +58,7 @@ if (exists("Simulation.roe")){
     pred.aroem <- rtruncnorm(1, a=0, b=1, mean = pred.aroem, sd=0.048)
     
     # --- Hunting mortality:
-    m.hunting.r <- rtruncnorm(1, a=0, b=1, mean = m.hunting.r, sd=0.030)
+    # m.hunting.r <- rtruncnorm(1, a=0, b=1, mean = m.hunting.r, sd=0.030)
     
     hunt.jroef <- rtruncnorm(1, a=0, b=1, mean = hunt.jroef, sd=0.051)
     hunt.yroef <- rtruncnorm(1, a=0, b=1, mean = hunt.yroef, sd=0.121)
@@ -86,7 +86,7 @@ if (exists("Simulation.roe")){
     m.redfox <- runif(1, 0.183, 0.343)
     
     # --- Lynx predation mortality:
-    m.lynxpred <- runif(1, 0.098, 0.189)
+    # m.lynxpred <- runif(1, 0.098, 0.189)
     
     pred.jroef <- runif(1, 0.060, 0.221)
     pred.yroef <- runif(1, 0.000, 0.270)
@@ -98,7 +98,7 @@ if (exists("Simulation.roe")){
     pred.aroem <- runif(1, 0.073, 0.232)
     
     # --- Hunting mortality:
-    m.hunting.r <- runif(1, 0.090, 0.187)
+    # m.hunting.r <- runif(1, 0.090, 0.187)
   
     hunt.jroef <- runif(1, 0.033, 0.188)
     hunt.yroef <- runif(1, 0.128, 0.518)
